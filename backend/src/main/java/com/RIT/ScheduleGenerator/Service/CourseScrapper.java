@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.net.*;
 
 public class CourseScrapper {
-    public static void scraperCourses() {
+    public static String scraperCourses() {
 
         HttpClient client = HttpClient.newHttpClient();
 
@@ -43,18 +43,22 @@ public class CourseScrapper {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        String ouput = "";    
 
         // Decompress GZIP response
         try (GZIPInputStream gzipStream = new GZIPInputStream(response.body());
              BufferedReader reader = new BufferedReader(new InputStreamReader(gzipStream))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                output += line;
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        return ouput;
 }
 
     public static void main(String[] args) {
