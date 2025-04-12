@@ -4,7 +4,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.RIT.ScheduleGenerator.Entity.Course;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,13 +20,14 @@ import java.io.InputStreamReader;
 import java.net.*;
 
 public class CourseScrapper {
-    public static String scraperCourses() {
+    private static String scrapeCoursesJSON() {
 
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://schedule.csh.rit.edu/search/find"))
-                .POST(BodyPublishers.ofString("term=20251&college=any&department=any&level=any&credits=&professor=&online=true&honors=true&offCampus=true&title=&description="))
+                .POST(BodyPublishers.ofString(
+                        "term=20251&college=any&department=any&level=any&credits=&professor=&online=true&honors=true&offCampus=true&title=&description="))
                 .setHeader("User-Agent",
                         "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0")
                 .setHeader("Accept", "application/json, text/plain, */*")
@@ -40,15 +49,14 @@ public class CourseScrapper {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
         } catch (IOException | InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        String output = "";    
+
+        String output = "";
 
         // Decompress GZIP response
         try (GZIPInputStream gzipStream = new GZIPInputStream(response.body());
-             BufferedReader reader = new BufferedReader(new InputStreamReader(gzipStream))) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(gzipStream))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 output += line;
@@ -59,9 +67,27 @@ public class CourseScrapper {
         }
 
         return output;
-}
+    }
+
+    public static List<Course> scrapeCourses() {
+        List<Course> courses = new ArrayList<>();
+        try {
+            String json = scrapeCoursesJSON();
+            JSONArray jsonArray = new JSONArray(json);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                Course course = new Course();
+                course.setID(obj.getInt("id"));
+                course.setName(obj.getString("title"));
+                courses.add(course);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return courses;
+    }
 
     public static void main(String[] args) {
-        scraperCourses();
+        scrapeCourses();
     }
 }
