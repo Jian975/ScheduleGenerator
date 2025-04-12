@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,5 +41,14 @@ public class CourseController {
         courseRepository.findById(courseDTO.id()).ifPresent(this::addNoRepeat);
         return MessageDTO.builder().withSuccess("Course added to taken list").build();
     }
-    
+
+    @GetMapping(value = "/getAllValidCourses")
+    public @ResponseBody List<CourseDTO> getAllValidCourses() {
+        return courseRepository.findAll()
+                .stream()
+                .filter(course -> course.meetsPrerequisites(coursesTaken))
+                .map(CourseDTO::from)
+                .toList();
+    }
+
 }

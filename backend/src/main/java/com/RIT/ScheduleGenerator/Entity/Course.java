@@ -2,6 +2,8 @@ package com.RIT.ScheduleGenerator.Entity;
 
 import java.util.List;
 
+import com.RIT.ScheduleGenerator.DTO.CourseDTO;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,5 +36,9 @@ public class Course {
             return id.equals(other.id);
         }
         return false;
+    }
+
+    public boolean meetsPrerequisites(List<Course> coursesTaken) {
+        return coursesTaken.containsAll(prerequisites);
     }
 }
