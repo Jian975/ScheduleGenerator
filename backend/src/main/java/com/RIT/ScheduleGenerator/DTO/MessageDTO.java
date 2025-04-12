@@ -9,9 +9,9 @@ import lombok.Builder;
 @Builder(setterPrefix = "with")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record MessageDTO(
-    String success,
-    String failure
-) {}
+public record MessageDTO(String success, String failure) 
+{
+    
+}
 
 
