@@ -14,17 +14,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.RIT.ScheduleGenerator.DTO.CourseDTO;
 import com.RIT.ScheduleGenerator.DTO.MessageDTO;
+import com.RIT.ScheduleGenerator.DTO.ProfessorDTO;
 import com.RIT.ScheduleGenerator.Entity.Course;
+import com.RIT.ScheduleGenerator.Entity.Professor;
 import com.RIT.ScheduleGenerator.Repository.CourseRepository;
+import com.RIT.ScheduleGenerator.Repository.ProfessorRepository;
 import com.RIT.ScheduleGenerator.Service.CourseScrapper;
 
 @Controller
 public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private ProfessorRepository professorRepository;
 
     private List<Course> coursesTaken;
-    private Set<String> professors;
+    
 
     private void initializeCoursesTaken() {
         if (coursesTaken == null) {
@@ -35,12 +40,12 @@ public class CourseController {
     private void fillCourses() {
         Pair<List<Course>, Set<String>> pair = CourseScrapper.scrapeCourses();
         List<Course> courses = pair.getFirst();
-        professors = pair.getSecond();
+        pair.getSecond().stream().forEach(professorName -> {
+            Professor professor = new Professor();
+            professor.setName(professorName);
+            professorRepository.save(professor);
+        });;
         courses.stream().forEach(courseRepository::save);
-    }
-
-    public Set<String> getProfessors() {
-        return professors;
     }
 
     private void addNoRepeat(Course course) {
