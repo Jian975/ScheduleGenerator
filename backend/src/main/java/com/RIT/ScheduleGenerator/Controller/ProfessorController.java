@@ -3,6 +3,8 @@ package com.RIT.ScheduleGenerator.Controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -37,22 +39,34 @@ public class ProfessorController {
         }
     }
 
-    // Add Professor with RMP rating based on ProfessorDTO
+    @PostConstruct
+    public void autoInitializeProfessorsWithRatings() {
+        List<Professor> existing = professorRepository.findAll();
+
+        for (Professor prof : existing) {
+            try {
+                Professor scraped = rateMyProfessorScraper.scrapeProfessorByName(prof.getName());
+                prof.setRating(scraped.getRating());
+                professorRepository.save(prof);
+                System.out.println("✅ Updated " + prof.getName() + " with rating: " + prof.getRating());
+            } catch (Exception e) {
+                System.err.println("⚠️ Failed to scrape " + prof.getName() + ": " + e.getMessage());
+            }
+        }
+
+        System.out.println("🎉 All professors initialized with RMP ratings.");
+    }
+
     @PostMapping(value = "/addProfessor", consumes = "application/json")
     public @ResponseBody MessageDTO addProfessor(@RequestBody ProfessorDTO professorDTO) {
         try {
             String professorName = professorDTO.name();
 
-            // Scrape professor information from RateMyProfessors based on the name
             Professor professor = rateMyProfessorScraper.scrapeProfessorByName(professorName);
-            professor.setID(professorDTO.id()); // Set the ID from the incoming ProfessorDTO
+            professor.setID(professorDTO.id());
+            professor.setRating((double) professorDTO.rating());
 
-            // Convert the rating from float to double (if needed)
-            professor.setRating((double) professorDTO.rating()); // Convert float to double
-
-            addNoRepeat(professor);  // Prevent duplicates before saving
-
-            // Save the professor to the repository
+            addNoRepeat(professor);
             professorRepository.save(professor);
 
             return MessageDTO.builder()
@@ -66,7 +80,6 @@ public class ProfessorController {
         }
     }
 
-    // Fetch all professors from the repository
     @GetMapping(value = "/getAllProfessors")
     public @ResponseBody List<Professor> getAllProfessors() {
         return professorRepository.findAll();

@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.RIT.ScheduleGenerator.DTO.CourseDTO;
 import com.RIT.ScheduleGenerator.DTO.MessageDTO;
@@ -19,16 +18,21 @@ import com.RIT.ScheduleGenerator.Entity.Professor;
 import com.RIT.ScheduleGenerator.Repository.CourseRepository;
 import com.RIT.ScheduleGenerator.Repository.ProfessorRepository;
 import com.RIT.ScheduleGenerator.Service.CourseScrapper;
+import com.RIT.ScheduleGenerator.Service.RateMyProfessorScraper;
 
 @Controller
 public class CourseController {
+
     @Autowired
     private CourseRepository courseRepository;
+
     @Autowired
     private ProfessorRepository professorRepository;
 
+    @Autowired
+    private RateMyProfessorScraper rateMyProfessorScraper;
+
     private List<Course> coursesTaken;
-    
 
     private void initializeCoursesTaken() {
         if (coursesTaken == null) {
@@ -36,17 +40,27 @@ public class CourseController {
         }
     }
 
-    @GetMapping(value = "/initializeCourses")
-    public @ResponseBody MessageDTO initializeCourses() {
+    @PostConstruct
+    public void autoInitializeCoursesAndProfessors() {
         Pair<List<Course>, Set<String>> pair = CourseScrapper.scrapeCourses();
         List<Course> courses = pair.getFirst();
-        pair.getSecond().stream().forEach(professorName -> {
-            Professor professor = new Professor();
-            professor.setName(professorName);
+        Set<String> professorNames = pair.getSecond();
+
+        for (String professorName : professorNames) {
+            Professor professor;
+            try {
+                professor = rateMyProfessorScraper.scrapeProfessorByName(professorName);
+            } catch (Exception e) {
+                professor = new Professor();
+                professor.setName(professorName);
+                professor.setRating(0.0); // Default if not found
+            }
             professorRepository.save(professor);
-        });;
-        courses.stream().forEach(courseRepository::save);
-        return MessageDTO.builder().withSuccess("Success").build();
+        }
+
+        courses.forEach(courseRepository::save);
+
+        System.out.println("✅ Courses and professors initialized at startup.");
     }
 
     private void addNoRepeat(Course course) {
@@ -71,5 +85,4 @@ public class CourseController {
                 .map(CourseDTO::from)
                 .toList();
     }
-
 }

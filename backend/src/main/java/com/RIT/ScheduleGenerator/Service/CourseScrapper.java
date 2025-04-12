@@ -65,7 +65,6 @@ public class CourseScrapper {
                 output += line;
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

@@ -3,8 +3,6 @@ package com.RIT.ScheduleGenerator.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.RIT.ScheduleGenerator.DTO.CourseDTO;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
