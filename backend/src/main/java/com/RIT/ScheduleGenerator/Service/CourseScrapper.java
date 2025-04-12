@@ -5,11 +5,14 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.data.util.Pair;
 
 import com.RIT.ScheduleGenerator.Entity.Course;
 
@@ -69,8 +72,9 @@ public class CourseScrapper {
         return output;
     }
 
-    public static List<Course> scrapeCourses() {
+    public static Pair<List<Course>, Set<String>> scrapeCourses() {
         List<Course> courses = new ArrayList<>();
+        Set<String> professors = new HashSet<>();
         try {
             String json = scrapeCoursesJSON();
             JSONArray jsonArray = new JSONArray(json);
@@ -79,12 +83,13 @@ public class CourseScrapper {
                 Course course = new Course();
                 course.setID(obj.getInt("id"));
                 course.setName(obj.getString("title"));
+                professors.add(obj.getString("instructor"));
                 courses.add(course);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return courses;
+        return Pair.of(courses, professors);
     }
 
     public static void main(String[] args) {
