@@ -27,4 +27,12 @@ public class Course {
     public List<Course> prerequisites() {
         return prerequisites;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Course other) {
+            return id.equals(other.id);
+        }
+        return false;
+    }
 }
