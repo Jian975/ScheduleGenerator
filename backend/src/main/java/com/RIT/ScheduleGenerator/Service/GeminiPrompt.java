@@ -8,6 +8,10 @@ import com.google.cloud.vertexai.generativemodel.ResponseHandler;
 import com.google.cloud.vertexai.generativemodel.Tool;
 import com.google.protobuf.util.JsonFormat;
 import java.io.IOException;
+import com.RIT.ScheduleGenerator.Controller.*;
+import com.RIT.ScheduleGenerator.DTO.*;
+import com.RIT.ScheduleGenerator.Entity.*;
+import com.RIT.ScheduleGenerator.Repository.*;
 
 public class GeminiPrompt {
 
