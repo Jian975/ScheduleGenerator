@@ -12,6 +12,6 @@ public class ProfessorCourse {
     }
 
     public Long getProfessorID() {
-        return professorID;
+       return professorID;
     }
 }

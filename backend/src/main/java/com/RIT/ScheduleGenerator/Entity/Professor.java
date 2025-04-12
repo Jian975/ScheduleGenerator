@@ -25,4 +25,13 @@ public class Professor {
     public Long getID() {
         return id;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+    
 }
