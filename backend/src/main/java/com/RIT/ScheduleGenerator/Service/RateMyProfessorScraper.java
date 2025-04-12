@@ -2,10 +2,12 @@ package com.RIT.ScheduleGenerator.Service;
 
 import com.RIT.ScheduleGenerator.Entity.Professor;
 import com.RIT.ScheduleGenerator.Repository.ProfessorRepository;
-import org.jsoup.*;
-import org.jsoup.nodes.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -18,16 +20,26 @@ public class RateMyProfessorScraper {
     public Professor scrapeProfessor(String url) throws IOException {
         Document doc = Jsoup.connect(url).get();
 
-        // Adjust selectors as needed depending on the structure of RMP
-        String name = doc.selectFirst("div.NameTitle__Name-dowf0z-0.cfjPUG").text(); // might need tweaking
-        String ratingStr = doc.selectFirst("div.RatingValue__Numerator-qw8sqy-2.gxuTRq").text(); // might need tweaking
+        Element scriptTag = doc.selectFirst("script[type=application/ld+json]");
+        if (scriptTag != null) {
+            String json = scriptTag.html();
+            JSONObject obj = new JSONObject(json);
 
-        double rating = Double.parseDouble(ratingStr);
+            String name = obj.getString("name");
 
-        Professor professor = new Professor();
-        professor.setName(name);
-        professor.setRating(rating);
+            double rating = 0.0;
+            if (obj.has("aggregateRating")) {
+                JSONObject ratingObj = obj.getJSONObject("aggregateRating");
+                rating = ratingObj.getDouble("ratingValue");
+            }
 
-        return professorRepository.save(professor);
+            Professor professor = new Professor();
+            professor.setName(name);
+            professor.setRating(rating);
+
+            return professorRepository.save(professor);
+        } else {
+            throw new IOException("No JSON-LD data found on page");
+        }
     }
 }

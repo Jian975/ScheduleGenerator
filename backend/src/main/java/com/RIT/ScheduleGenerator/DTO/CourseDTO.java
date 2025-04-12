@@ -1,5 +1,7 @@
 package com.RIT.ScheduleGenerator.DTO;
 
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
