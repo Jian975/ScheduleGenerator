@@ -1,6 +1,7 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.RIT.ScheduleGenerator.Entity.Course;
 import com.RIT.ScheduleGenerator.Service.CourseScrapper;
 
 import java.nio.file.Files;
