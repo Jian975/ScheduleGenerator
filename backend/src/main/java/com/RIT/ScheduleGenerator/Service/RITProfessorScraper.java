@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,22 +14,29 @@ import java.util.List;
 @Service
 public class RITProfessorScraper {
 
-    public List<String> getAllRITProfessorIds() throws IOException {
+    public static List<String> getAllRITProfessorIds() throws IOException {
         List<String> professorIds = new ArrayList<>();
-        
-        String url = "https://www.ratemyprofessors.com/search/professors/807?q=*";
-        Document doc = Jsoup.connect(url).get();
 
-        // Find the links that contain the professor ID (you may need to adjust the selector depending on the structure)
-        Elements links = doc.select("a.professor-name-link");
+        // Load local HTML file
+        File input = new File("path/to/your/page source.html");
+        Document doc = Jsoup.parse(input, "UTF-8");
+
+        // Updated selector to match hrefs containing "/professor/"
+        Elements links = doc.select("a[href^=\"/professor/\"]");
 
         for (Element link : links) {
             String professorUrl = link.attr("href");
-            // The professor ID is in the URL, e.g., "https://www.ratemyprofessors.com/professor/306975"
-            String professorId = professorUrl.split("/")[2];
-            professorIds.add(professorId);
+            String[] parts = professorUrl.split("/");
+            if (parts.length >= 3) {
+                professorIds.add(parts[2]); // Extract ID from /professor/{id}
+            }
         }
 
+        System.out.println(professorIds); // Print the list of professor IDs
         return professorIds;
+    }
+
+    public static void main(String[] args) throws IOException {
+        getAllRITProfessorIds();
     }
 }
