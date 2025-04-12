@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class GeminiPrompt {
 
-    public static void main(String[] args) throws IOException {
+    public static void Prompt() throws IOException {
         String project = "your-gcp-project-id";
         String location = "us-central1";
         String modelName = "gemini-pro";
