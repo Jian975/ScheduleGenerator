@@ -1,39 +1,24 @@
 package com.RIT.ScheduleGenerator.Service;
-import com.google.cloud.vertexai.VertexAI;
-import com.google.cloud.vertexai.api.Content;
-import com.google.cloud.vertexai.api.GenerateContentResponse;
-import com.google.cloud.vertexai.api.GenerationConfig;
-import com.google.cloud.vertexai.api.Part;
-import com.google.cloud.vertexai.generativemodel.GenerativeModel;
-import com.google.cloud.vertexai.generativemodel.ResponseHandler;
-import com.google.cloud.vertexai.generativemodel.Tool;
-import com.google.protobuf.util.JsonFormat;
-import java.io.IOException;
-import com.RIT.ScheduleGenerator.Controller.*;
-import com.RIT.ScheduleGenerator.DTO.*;
-import com.RIT.ScheduleGenerator.Entity.*;
-import com.RIT.ScheduleGenerator.Repository.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import ai.timeString.spring.ai.chat.ChatClient;
+import ai.timeString.spring.ai.chat.model.ChatModel;
+import ai.timeString.spring.ai.prompt.Prompt;
+import java.util.List;
+
+@RestController
 public class GeminiPrompt {
 
-    public static void Prompt() throws IOException {
-        String project = "your-gcp-project-id";
-        String location = "us-central1";
-        String modelName = "gemini-pro";
-        String promptText = "Pull out each course and its associated data from the following xml: ";
+    @Autowired
+    private ChatModel chatModel; // Example using ChatModel, you may need to configure it specifically for Gemini
 
-        VertexAI vertexAI = new VertexAI(project, location);
-        GenerativeModel model = new GenerativeModel(modelName, vertexAI);
-
-        Content content = Content.newBuilder()
-                .addParts(Part.newBuilder().setText(promptText))
-                .build();
-
-        GenerateContentResponse response = model.generateContent(content);
-
-        String generatedText = ResponseHandler.getText(response);
-        System.out.println("Generated Text: " + generatedText);
-
-        vertexAI.close();
+    @PostMapping("/gemini")
+    public String getGeminiResponse(@RequestBody String userPrompt) {
+        Prompt prompt = new Prompt(List.of("user:" + userPrompt, "assistant:")); // Example prompt structure
+        String response = chatModel.call(prompt); // Use your configured chat client
+        return response;
     }
 }
