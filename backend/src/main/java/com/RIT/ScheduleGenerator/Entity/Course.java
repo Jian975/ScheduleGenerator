@@ -1,18 +1,20 @@
 package com.RIT.ScheduleGenerator.Entity;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Person {
+public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private int age;
+    private List<Course> prerequisites;
 
     public Long getID() {
         return id;
@@ -22,8 +24,7 @@ public class Person {
         return name;
     }
 
-    public int getAge() {
-        return age;
+    public List<Course> prerequisites() {
+        return prerequisites;
     }
-
 }

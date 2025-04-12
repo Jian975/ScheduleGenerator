@@ -6,24 +6,23 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Person {
+public class Professor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private int age;
-
-    public Long getID() {
-        return id;
-    }
+    private Double rating;
 
     public String getName() {
         return name;
     }
 
-    public int getAge() {
-        return age;
+    public Double getRating() {
+        return rating;
     }
 
+    public Long getID() {
+        return id;
+    }
 }
