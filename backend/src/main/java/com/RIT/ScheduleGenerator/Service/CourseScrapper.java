@@ -93,6 +93,6 @@ public class CourseScrapper {
     }
 
     public static void main(String[] args) {
-        scrapeCourses();
+        System.out.println(scrapeCoursesJSON());
     }
 }

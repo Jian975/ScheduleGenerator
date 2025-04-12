@@ -34,6 +34,10 @@ public class Professor {
         this.rating = rating;
     }
 
+    public void setID(Long id) {
+        this.id = id;
+    }
+
     public String toString() {
         return name;
     }
