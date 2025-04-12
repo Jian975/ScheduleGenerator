@@ -18,6 +18,7 @@ public class RateMyProfessorScraper {
     public Professor scrapeProfessor(String url) throws IOException {
         Document doc = Jsoup.connect(url).get();
 
+        // Adjust selectors as needed depending on the structure of RMP
         String name = doc.selectFirst("div.NameTitle__Name-dowf0z-0.cfjPUG").text(); // might need tweaking
         String ratingStr = doc.selectFirst("div.RatingValue__Numerator-qw8sqy-2.gxuTRq").text(); // might need tweaking
 
