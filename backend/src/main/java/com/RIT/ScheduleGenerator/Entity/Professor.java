@@ -33,5 +33,9 @@ public class Professor {
     public void setRating(Double rating) {
         this.rating = rating;
     }
+
+    public String toString() {
+        return name;
+    }
     
 }
