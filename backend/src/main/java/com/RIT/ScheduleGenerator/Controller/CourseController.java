@@ -2,8 +2,10 @@ package com.RIT.ScheduleGenerator.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +16,7 @@ import com.RIT.ScheduleGenerator.DTO.CourseDTO;
 import com.RIT.ScheduleGenerator.DTO.MessageDTO;
 import com.RIT.ScheduleGenerator.Entity.Course;
 import com.RIT.ScheduleGenerator.Repository.CourseRepository;
+import com.RIT.ScheduleGenerator.Service.CourseScrapper;
 
 @Controller
 public class CourseController {
@@ -21,11 +24,23 @@ public class CourseController {
     private CourseRepository courseRepository;
 
     private List<Course> coursesTaken;
+    private Set<String> professors;
 
     private void initializeCoursesTaken() {
         if (coursesTaken == null) {
             coursesTaken = new ArrayList<>();
         }
+    }
+
+    private void fillCourses() {
+        Pair<List<Course>, Set<String>> pair = CourseScrapper.scrapeCourses();
+        List<Course> courses = pair.getFirst();
+        professors = pair.getSecond();
+        courses.stream().forEach(courseRepository::save);
+    }
+
+    public Set<String> getProfessors() {
+        return professors;
     }
 
     private void addNoRepeat(Course course) {
