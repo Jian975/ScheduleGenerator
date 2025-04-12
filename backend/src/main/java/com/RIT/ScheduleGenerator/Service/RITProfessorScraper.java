@@ -16,7 +16,7 @@ public class RITProfessorScraper {
     public List<String> getAllRITProfessorIds() throws IOException {
         List<String> professorIds = new ArrayList<>();
         
-        String url = "https://www.ratemyprofessors.com/search/professors?q=Rochester+Institute+of+Technology";
+        String url = "https://www.ratemyprofessors.com/search/professors/807?q=*";
         Document doc = Jsoup.connect(url).get();
 
         // Find the links that contain the professor ID (you may need to adjust the selector depending on the structure)
