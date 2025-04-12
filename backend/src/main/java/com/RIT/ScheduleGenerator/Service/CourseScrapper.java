@@ -44,7 +44,7 @@ public class CourseScrapper {
             e.printStackTrace();
         }
         
-        String ouput = "";    
+        String output = "";    
 
         // Decompress GZIP response
         try (GZIPInputStream gzipStream = new GZIPInputStream(response.body());
@@ -58,7 +58,7 @@ public class CourseScrapper {
             e.printStackTrace();
         }
 
-        return ouput;
+        return output;
 }
 
     public static void main(String[] args) {

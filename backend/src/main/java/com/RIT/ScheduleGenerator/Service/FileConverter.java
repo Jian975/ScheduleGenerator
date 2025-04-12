@@ -1,10 +1,10 @@
+package com.RIT.ScheduleGenerator.Service;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.RIT.ScheduleGenerator.Service.CourseScrapper;
+import com.RIT.ScheduleGenerator.Entity.Course;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
