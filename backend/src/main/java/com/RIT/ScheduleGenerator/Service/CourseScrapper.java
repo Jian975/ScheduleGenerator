@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.net.*;
 
 public class CourseScrapper {
-    public static void scraperCourse(String major) {
+    public static void scraperCourses() {
 
         HttpClient client = HttpClient.newHttpClient();
 
@@ -58,6 +58,6 @@ public class CourseScrapper {
 }
 
     public static void main(String[] args) {
-        scraperCourse("acc");
+        scraperCourses();
     }
 }
