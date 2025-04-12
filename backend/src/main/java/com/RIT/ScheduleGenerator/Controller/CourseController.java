@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.RIT.ScheduleGenerator.DTO.CourseDTO;
 import com.RIT.ScheduleGenerator.DTO.MessageDTO;
-import com.RIT.ScheduleGenerator.DTO.ProfessorDTO;
 import com.RIT.ScheduleGenerator.Entity.Course;
 import com.RIT.ScheduleGenerator.Entity.Professor;
 import com.RIT.ScheduleGenerator.Repository.CourseRepository;
@@ -37,7 +36,8 @@ public class CourseController {
         }
     }
 
-    private void fillCourses() {
+    @GetMapping(value = "/initializeCourses")
+    public @ResponseBody MessageDTO initializeCourses() {
         Pair<List<Course>, Set<String>> pair = CourseScrapper.scrapeCourses();
         List<Course> courses = pair.getFirst();
         pair.getSecond().stream().forEach(professorName -> {
@@ -46,6 +46,7 @@ public class CourseController {
             professorRepository.save(professor);
         });;
         courses.stream().forEach(courseRepository::save);
+        return MessageDTO.builder().withSuccess("Success").build();
     }
 
     private void addNoRepeat(Course course) {
